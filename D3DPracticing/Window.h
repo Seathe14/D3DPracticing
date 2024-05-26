@@ -30,6 +30,7 @@ public:
 	const Keyboard& GetKeyboard() const;
 	const Mouse& GetMouse() const;
 
+	static std::optional<int> ProcessMessages();
 private:
 	class WindowPrivate
 	{

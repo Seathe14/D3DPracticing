@@ -1,22 +1,12 @@
 #include <sstream>
 
 #include "WinHeader.h"
-#include "Window.h"
+#include "App.h"
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
 	try {
-		Window wnd(400, 400, "Brakba");
-		MSG msg;
-		BOOL gResult;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		if (gResult == -1)
-			return -1;
-		return static_cast<int>(msg.wParam);
+		App{}.RunLoop();
 	}
 	catch(const BaseException& e)
 	{
