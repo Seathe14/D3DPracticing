@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "WinHeader.h"
 #include "Window.h"
 
@@ -14,6 +16,16 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 			if (wnd.GetKeyboard().IsKeyPressed(VK_MENU))
 			{
 				MessageBox(nullptr, "something happen", "the alt key was pressed", MB_OK);
+			}
+			while(!wnd.GetMouse().IsEmpty())
+			{
+				const auto e = wnd.GetMouse().Read();
+				if (e.has_value() && e->GetType() == Mouse::Event::Type::Move)
+				{
+					std::ostringstream oss;
+					oss << "Mouse position: (" << e->GetPos().x << "," << e->GetPos().y << ")";
+					wnd.SetTitle(oss.str());
+				}
 			}
 		}
 		if (gResult == -1)

@@ -59,6 +59,45 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_SYSKEYUP:
 		kbd.OnKeyReleased(wParam);
 		break;
+	case WM_LBUTTONDOWN:
+		mouse.OnLeftPressed(wParam, lParam);
+		break;
+	case WM_LBUTTONUP:
+		mouse.OnLeftReleased(wParam, lParam);
+		break;
+	case WM_RBUTTONDOWN:
+		mouse.OnRightPressed(wParam, lParam);
+		break;
+	case WM_RBUTTONUP:
+		mouse.OnRightReleased(wParam, lParam);
+		break;
+	case WM_MOUSEWHEEL:
+		mouse.OnMouseWheel(wParam, lParam);
+		break;
+	case WM_MOUSEMOVE:
+		const POINTS pt = MAKEPOINTS(lParam);
+		if (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height)
+		{
+			mouse.OnMouseMove(wParam, lParam);
+			if (!mouse.IsInWindow())
+			{
+				SetCapture(hWnd);
+				mouse.OnMouseEnter();
+			}
+		}
+		else
+		{
+			if (mouse.IsLeftPressed() || mouse.IsRightPressed())
+			{
+				mouse.OnMouseMove(wParam, lParam);
+			}
+			else
+			{
+				ReleaseCapture();
+				mouse.OnMouseLeave();
+			}
+		}
+		break;
 	case WM_CHAR:
 		kbd.OnChar(wParam);
 		break;
@@ -141,6 +180,8 @@ std::string Window::Exception::GetErrorString() const
 }
 
 Window::Window(int width, int height, std::string_view name)
+			  : width(width)
+			  , height(height)
 {
 	RECT wr;
 	wr.left = 100;
@@ -165,7 +206,20 @@ Window::~Window()
 	DestroyWindow(hWnd);  
 }
 
+void Window::SetTitle(std::string_view title)
+{
+	if (!SetWindowText(hWnd, title.data()))
+	{
+		throw WND_LAST_EXCEPT();
+	}
+}
+
 const Keyboard& Window::GetKeyboard() const
 {
 	return kbd;
+}
+
+const Mouse& Window::GetMouse() const
+{
+	return mouse;
 }

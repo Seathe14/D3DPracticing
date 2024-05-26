@@ -2,7 +2,7 @@
 #include "WinHeader.h"
 #include "BaseException.h"
 #include "Keyboard.h"
-#include <string_view>
+#include "Mouse.h"
 
 class BaseException;
 
@@ -26,7 +26,9 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator= (const Window&) = delete;
+	void SetTitle(std::string_view title);
 	const Keyboard& GetKeyboard() const;
+	const Mouse& GetMouse() const;
 
 private:
 	class WindowPrivate
@@ -48,6 +50,7 @@ private:
 	int height{ 0 };
 	HWND hWnd{ NULL };
 	Keyboard kbd;
+	Mouse mouse;
 
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
