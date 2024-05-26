@@ -50,11 +50,20 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_KEYDOWN: [[fallthrough]];
 	case WM_SYSKEYDOWN:
-		kbd.OnKeyPressed(wParam);
+		if (!(lParam & 0x40000000) || kbd.IsAutoRepeatEnabled()) 
+		{
+			kbd.OnKeyPressed(wParam);
+		}
 		break;
 	case WM_KEYUP: [[fallthrough]];
 	case WM_SYSKEYUP:
 		kbd.OnKeyReleased(wParam);
+		break;
+	case WM_CHAR:
+		kbd.OnChar(wParam);
+		break;
+	case WM_KILLFOCUS:
+		kbd.ClearState();
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -154,4 +163,9 @@ Window::Window(int width, int height, std::string_view name)
 Window::~Window()
 {
 	DestroyWindow(hWnd);  
+}
+
+const Keyboard& Window::GetKeyboard() const
+{
+	return kbd;
 }

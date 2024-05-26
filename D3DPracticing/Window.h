@@ -26,6 +26,8 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator= (const Window&) = delete;
+	const Keyboard& GetKeyboard() const;
+
 private:
 	class WindowPrivate
 	{

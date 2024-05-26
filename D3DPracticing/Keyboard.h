@@ -1,7 +1,7 @@
 #pragma once
 #include "WinHeader.h"
 #include <queue>
-
+#include <bitset>
 class Keyboard
 {
 public:
@@ -44,9 +44,38 @@ public:
 
 	void OnKeyPressed(WPARAM wParam);
 	void OnKeyReleased(WPARAM wParam);
-	bool IsKeyPressed(WPARAM wParam) const;
-	bool KeybufferIsEmpty() const;
+	void OnChar(WPARAM wParam);
+	std::optional<Event> ReadKey();
+	std::optional<char> ReadChar();
 
+	void ClearState();
+	void EnableAutoRepeat();
+	void DisableAutoRepeat();
+	void FlushKeyBuffer();
+	void FlushCharBuffer();
+	void Flush();
+
+	bool IsAutoRepeatEnabled() const;
+	bool IsKeyPressed(WPARAM wParam) const;
+	bool KeyBufferIsEmpty() const;
+	bool CharBufferIsEmpty() const;
 private:
+	static constexpr unsigned int nKeys = 256u;
+	static constexpr unsigned int bufferSize = 16u;
+	bool isAutoRepeat{ false };
 	std::queue<Event> keyBuffer;
+	std::queue<char> charBuffer;
+	std::bitset<nKeys> keyStates;
+
+	template<typename T>
+	static void TrimBuffer(std::queue<T>& queue);
 };
+
+template <typename T>
+void Keyboard::TrimBuffer(std::queue<T>& queue)
+{
+	while (queue.size() > bufferSize)
+	{
+		queue.pop();
+	}
+}
