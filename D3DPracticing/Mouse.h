@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <queue>
 
 #include "WinHeader.h"

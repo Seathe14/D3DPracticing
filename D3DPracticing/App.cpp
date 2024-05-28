@@ -1,4 +1,5 @@
 #include "App.h"
+#include "Graphics.h"
 
 App::App() : wnd(800,600, "myWnd")
 {
@@ -12,10 +13,13 @@ int App::RunLoop()
 		{
 			return *ecode;
 		}
+		DoFrame();
 	}
 }
 
 void App::DoFrame()
 {
-
+	const float c = std::sin(tmr.Peek()) / 2.0f + 0.5f;
+	wnd.GetGfx().ClearBuffer(c, c, 1.0f);
+	wnd.GetGfx().EndFrame();
 }

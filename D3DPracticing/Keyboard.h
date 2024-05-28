@@ -2,6 +2,8 @@
 #include "WinHeader.h"
 #include <queue>
 #include <bitset>
+#include <optional>
+
 class Keyboard
 {
 public:

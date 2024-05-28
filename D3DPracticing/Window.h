@@ -3,8 +3,10 @@
 #include "BaseException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include <memory>
 
 class BaseException;
+class Graphics;
 
 class Window
 {
@@ -27,8 +29,10 @@ public:
 	Window(const Window&) = delete;
 	Window& operator= (const Window&) = delete;
 	void SetTitle(std::string_view title);
+
 	const Keyboard& GetKeyboard() const;
 	const Mouse& GetMouse() const;
+	Graphics& GetGfx();
 
 	static std::optional<int> ProcessMessages();
 private:
@@ -52,11 +56,12 @@ private:
 	HWND hWnd{ NULL };
 	Keyboard kbd;
 	Mouse mouse;
+	std::unique_ptr<Graphics> pGfx;
 
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
-#define WND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr);
-#define WND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError());
+#define WND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
+#define WND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())

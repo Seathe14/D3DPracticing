@@ -1,5 +1,5 @@
 #include "Window.h"
-
+#include "Graphics.h"
 #include <sstream>
 
 Window::WindowPrivate::WindowPrivate() : hInst(GetModuleHandle(nullptr))
@@ -108,11 +108,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
-	//if (msg == WM_DESTROY)
-	//{
-	//	PostQuitMessage(0);
-	//	return 0;
-	//}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -143,7 +139,8 @@ const char* Window::Exception::what() const
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
-		<< "[Error Code] " << GetErrorCode() << std::endl
+		<< "[Error code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< std::dec << " (" << static_cast<unsigned long>(GetErrorCode()) << ")" << std::endl
 		<< "[Description] " << GetErrorString() << std::endl
 		<< GetOriginString();
 	whatBuffer = oss.str();
@@ -199,6 +196,8 @@ Window::Window(int width, int height, std::string_view name)
 		throw WND_LAST_EXCEPT();
 	}
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window()
@@ -222,6 +221,10 @@ const Keyboard& Window::GetKeyboard() const
 const Mouse& Window::GetMouse() const
 {
 	return mouse;
+}
+Graphics& Window::GetGfx()
+{
+	return *pGfx;
 }
 
 std::optional<int> Window::ProcessMessages()
