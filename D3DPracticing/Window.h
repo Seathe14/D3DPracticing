@@ -62,6 +62,3 @@ private:
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 };
-
-#define WND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
-#define WND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())

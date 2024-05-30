@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "Graphics.h"
+#include "WindowsMacros.h"
 #include <sstream>
 
 Window::WindowPrivate::WindowPrivate() : hInst(GetModuleHandle(nullptr))

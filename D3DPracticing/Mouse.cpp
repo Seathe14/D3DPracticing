@@ -6,46 +6,46 @@ static std::tuple<int, int> ExtractCoords(LPARAM lParam)
 	return { pt.x, pt.y };
 }
 
-void Mouse::OnLeftPressed(WPARAM wParam, LPARAM lParam)
+void Mouse::OnLeftPressed([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	leftIsPressed = true;
 	OnEventImpl(Event::Type::LPress, lParam);
 }
 
-void Mouse::OnLeftReleased(WPARAM wParam, LPARAM lParam)
+void Mouse::OnLeftReleased([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	leftIsPressed = false;
 	OnEventImpl(Event::Type::LRelease, lParam);
 }
 
-void Mouse::OnRightPressed(WPARAM wParam, LPARAM lParam)
+void Mouse::OnRightPressed([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	rightIsPressed = true;
 	OnEventImpl(Event::Type::RPress, lParam);
 }
 
-void Mouse::OnRightReleased(WPARAM wParam, LPARAM lParam)
+void Mouse::OnRightReleased([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	rightIsPressed = false;
 	OnEventImpl(Event::Type::RRelease, lParam);
 }
 
-void Mouse::OnMiddlePressed(WPARAM wParam, LPARAM lParam)
+void Mouse::OnMiddlePressed([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	OnEventImpl(Event::Type::MPress, lParam);
 }
 
-void Mouse::OnMiddleReleased(WPARAM wParam, LPARAM lParam)
+void Mouse::OnMiddleReleased([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	OnEventImpl(Event::Type::MRelease, lParam);
 }
 
-void Mouse::OnMouseMove(WPARAM wParam, LPARAM lParam)
+void Mouse::OnMouseMove([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	OnEventImpl(Event::Type::Move, lParam);
 }
 
-void Mouse::OnMouseWheel(WPARAM wParam, LPARAM lParam)
+void Mouse::OnMouseWheel([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	const auto delta = GET_WHEEL_DELTA_WPARAM(wParam);
 	wheelDeltaCarry += delta;

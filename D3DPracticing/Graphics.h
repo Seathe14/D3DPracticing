@@ -2,6 +2,8 @@
 
 #include "Window.h"
 #include <d3d11.h>
+#include "DxgiInfoManager.h"
+#include <wrl/client.h>
 
 class Graphics
 {
@@ -16,23 +18,32 @@ public:
 
 	class HrException : public Window::Exception
 	{
-		using Exception::Exception;
 	public:
+		HrException(int line, std::string_view file, HRESULT hr, const std::vector<std::string>& messages = {});
 		const char* GetType() const override;
+		char const* what() const override;
+		std::string GetErrorInfo() const;
+	private:
+		std::string info;
 	};
 
-	class DeviceRemovedException : HrException
+	class DeviceRemovedException : public HrException
 	{
 		using HrException::HrException;
 	public:
 		const char* GetType() const override;
+	private:
+		std::string reason;
 	};
 
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
 private:
-	ID3D11Device* pDevice = nullptr;
-	IDXGISwapChain* pSwap = nullptr;
-	ID3D11DeviceContext* pContext = nullptr;
-	ID3D11RenderTargetView* pTarget = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+#ifndef NDEBUG
+	DxgiInfoManager infoManager;
+#endif
 };
