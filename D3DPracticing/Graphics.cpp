@@ -4,6 +4,7 @@
 #include <sstream>
 #include <dxdiag.h>
 #include "GraphicsMacros.h"
+#include <d3dcompiler.h>
 
 using Microsoft::WRL::ComPtr;
 
@@ -97,6 +98,43 @@ const char* Graphics::DeviceRemovedException::GetType() const
 	return "Graphics Exception [Device Removed]";
 }
 
+Graphics::InfoException::InfoException(int line, std::string_view file, const std::vector<std::string>& messages)
+	: BaseException(line, file)
+{
+	for (const auto& m : messages)
+	{
+		info += m;
+		info.push_back('\n');
+	}
+	if (!info.empty())
+	{
+		info.pop_back();
+	}
+}
+
+char const* Graphics::InfoException::what() const
+{
+	std::ostringstream oss;
+	oss << GetType() << std::endl;
+	if (!info.empty())
+	{
+		oss << "\n[Error Info]\n" << GetErrorInfo() << std::endl;
+	}
+	oss << GetOriginString();
+	whatBuffer = oss.str();
+	return whatBuffer.c_str();
+}
+
+const char* Graphics::InfoException::GetType() const
+{
+	return "Graphics info exception";
+}
+
+std::string Graphics::InfoException::GetErrorInfo() const
+{
+	return info;
+}
+
 void Graphics::EndFrame()
 {
 	HRESULT hr;
@@ -120,4 +158,66 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red, green, blue };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
+}
+
+void Graphics::DrawTestTriangle()
+{
+	struct Vertex
+	{
+		float x;
+		float y;
+	};
+	const Vertex vertices[] = {
+		{ 0.0, 0.5},
+		{0.5, -0.5},
+		{-0.5,-0.5}
+	};
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(vertices);
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = vertices;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+
+	ComPtr<ID3D11Buffer> pBuff;
+	pDevice->CreateBuffer(&bufferDesc, &initData, &pBuff);
+
+	ComPtr<ID3DBlob> pBlob;
+	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	ComPtr<ID3D11InputLayout> pLayout;
+	pDevice->CreateInputLayout(layout, 1, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout);
+	pContext->IASetVertexBuffers(0, 1, pBuff.GetAddressOf(), &stride, &offset);
+	pContext->IASetInputLayout(pLayout.Get());
+	pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ComPtr<ID3D11VertexShader> pVertexShader;
+	pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
+	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
+
+	D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
+	ComPtr<ID3D11PixelShader> pPixelShader;
+	pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
+	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0);
+
+	pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), nullptr);
+	D3D11_VIEWPORT viewPort;
+	viewPort.TopLeftX = 0.0;
+	viewPort.TopLeftY = 0.0;
+	viewPort.Width = 800;
+	viewPort.Height = 600;
+	viewPort.MaxDepth = 0;
+	viewPort.MinDepth = 0;
+	pContext->RSSetViewports(1, &viewPort);
+	
+	GFX_THROW_INFO_ONLY(pContext->Draw(3u, 0u));
 }

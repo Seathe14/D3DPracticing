@@ -203,7 +203,7 @@ Window::Window(int width, int height, std::string_view name)
 
 Window::~Window()
 {
-	DestroyWindow(hWnd);  
+	//DestroyWindow(hWnd);
 }
 
 void Window::SetTitle(std::string_view title)

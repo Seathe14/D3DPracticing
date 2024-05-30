@@ -36,8 +36,20 @@ public:
 		std::string reason;
 	};
 
+	class InfoException : public BaseException
+	{
+	public:
+		InfoException(int line, std::string_view file, const std::vector<std::string>& messages = {});
+		char const* what() const override;
+		const char* GetType() const override;
+		std::string GetErrorInfo() const;
+	private:
+		std::string info;
+	};
+
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
+	void DrawTestTriangle();
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
