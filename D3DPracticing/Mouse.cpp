@@ -1,8 +1,11 @@
 #include "Mouse.h"
 
+#include <sstream>
+
 static std::tuple<int, int> ExtractCoords(LPARAM lParam)
 {
 	const POINTS pt = MAKEPOINTS(lParam);
+
 	return { pt.x, pt.y };
 }
 
@@ -49,15 +52,16 @@ void Mouse::OnMouseWheel([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 {
 	const auto delta = GET_WHEEL_DELTA_WPARAM(wParam);
 	wheelDeltaCarry += delta;
+
 	while (wheelDeltaCarry >= WHEEL_DELTA)
 	{
 		wheelDeltaCarry -= WHEEL_DELTA;
-		OnEventImpl(Event::Type::WheelUp, lParam);
+		OnEventImpl(Event::Type::WheelUp);
 	}
 	while (wheelDeltaCarry <= -WHEEL_DELTA)
 	{
 		wheelDeltaCarry += WHEEL_DELTA;
-		OnEventImpl(Event::Type::WheelDown, lParam);
+		OnEventImpl(Event::Type::WheelDown);
 	}
 }
 

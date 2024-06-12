@@ -186,24 +186,29 @@ Window::Window(int width, int height, std::string_view name)
 	wr.right = width + wr.left;
 	wr.top = 100;
 	wr.bottom = height + wr.top;
-	if (!AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE))
-	{
-		throw WND_LAST_EXCEPT();
+	try {
+		if (!AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE))
+		{
+			throw WND_LAST_EXCEPT();
+		}
+		hWnd = CreateWindow(WindowPrivate::GetName(), name.data(), WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top, nullptr,
+							nullptr, WindowPrivate::GetInstance(), this);
+		if (hWnd == nullptr)
+		{
+			throw WND_LAST_EXCEPT();
+		}
+		ShowWindow(hWnd, SW_SHOWDEFAULT);
+		pGfx = std::make_unique<Graphics>(hWnd);
+		}
+	catch (...) { // Workaround to avoid crashing during wndProc events
+		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&DefWindowProc));
+		throw;
 	}
-	hWnd = CreateWindow(WindowPrivate::GetName(), name.data(), WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top, nullptr,
-						nullptr, WindowPrivate::GetInstance(), this);
-	if (hWnd == nullptr)
-	{
-		throw WND_LAST_EXCEPT();
-	}
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
-
-	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window()
 {
-	//DestroyWindow(hWnd);
+	DestroyWindow(hWnd);
 }
 
 void Window::SetTitle(std::string_view title)

@@ -48,8 +48,8 @@ public:
 	};
 
 	void EndFrame();
-	void ClearBuffer(float red, float green, float blue);
-	void DrawTestTriangle();
+	void ClearBuffer(float red, float green, float blue) const;
+	void DrawTestTriangle(float angle, float x, float y);
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;

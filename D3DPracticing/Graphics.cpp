@@ -5,8 +5,10 @@
 #include <dxdiag.h>
 #include "GraphicsMacros.h"
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 using Microsoft::WRL::ComPtr;
+using namespace DirectX;
 
 Graphics::Graphics(HWND hWnd)
 {
@@ -154,60 +156,165 @@ void Graphics::EndFrame()
 	}
 }
 
-void Graphics::ClearBuffer(float red, float green, float blue)
+void Graphics::ClearBuffer(float red, float green, float blue) const
 {
 	const float color[] = { red, green, blue };
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
-void Graphics::DrawTestTriangle()
+void Graphics::DrawTestTriangle(float angle, float x, float y)
 {
 	struct Vertex
 	{
-		float x;
-		float y;
+		struct {
+			float x;
+			float y;
+			float z;
+		} pos;
+
+		struct
+		{
+			unsigned char r;
+			unsigned char g;
+			unsigned char b;
+			unsigned char a;
+		} color;
 	};
 	const Vertex vertices[] = {
-		{ 0.0, 0.5},
-		{0.5, -0.5},
-		{-0.5,-0.5}
+		{1.0, 1.0, 1.0, 255, 0, 0, 255}, //0
+		{1.0, 1.0, -1.0, 0, 255,0,255}, //1
+		{1.0,-1.0,1.0,0,255,0,255}, //2
+		{1.0,-1.0,-1.0,0,0,255,255}, //3
+		{-1.0,1.0,1.0,0,0,255,255}, //4
+		{-1.0,1.0,-1.0, 255,0,0,255}, //5
+		{-1.0,-1.0,-1.0,255,0,0,255}, //6
+		{-1.0,-1.0,1.0,0,255,0,255} //7
+	};
+
+	const Vertex vertices2[] = {
+	{0.25, 0.25, 0.25, 255, 0, 0, 255}, //0
+	{0.25, 0.25, -0.25, 255,0,0,255}, //1
+	{0.25,-0.25,0.25,255,0,0,255}, //2
+	{0.25,-0.25,-0.25,255,0,0,255}, //3
+	{-0.25,0.25,0.25,0,255,0,255}, //4
+	{-0.25,0.25,-0.25, 0,255,0,255}, //5
+	{-0.25,-0.25,-0.25,0,0,255,255}, //6
+	{-0.25,-0.25,0.25,0,0,255,255} //7
+	};
+
+	const uint16_t indices[] = {
+		3, 1, 0, //right
+		0, 2, 3, //right
+		5, 4, 0, //up
+		0, 1, 5, //up
+		7, 4, 5, //left
+		5, 6, 7, //left
+		6, 5, 1, //front
+		1, 3, 6, //front
+		7, 6, 3, //down
+		3, 2, 7, //down
+		2, 0, 4, //back
+		4, 7, 2, //back
+
 	};
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
+
+	HRESULT hr;
+
+	//Intiialize index buffer
+	D3D11_BUFFER_DESC indexBufferDesc;
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(indices);
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = sizeof(uint16_t);
+
+	D3D11_SUBRESOURCE_DATA indexBufferSbd;
+	indexBufferSbd.pSysMem = indices;
+	indexBufferSbd.SysMemPitch = 0;
+	indexBufferSbd.SysMemSlicePitch = 0;
+
+	ComPtr<ID3D11Buffer> pIndexBuffer;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&indexBufferDesc, &indexBufferSbd, &pIndexBuffer));
+
+	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	//end
+	
+	//initialize vertex buffer
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.ByteWidth = sizeof(vertices);
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
 	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = sizeof(Vertex);
 
 	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = vertices;
+	initData.pSysMem = vertices2;
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 
 	ComPtr<ID3D11Buffer> pBuff;
-	pDevice->CreateBuffer(&bufferDesc, &initData, &pBuff);
+	GFX_THROW_INFO(pDevice->CreateBuffer(&bufferDesc, &initData, &pBuff));
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	pContext->IASetVertexBuffers(0, 1, pBuff.GetAddressOf(), &stride, &offset);
+	//end
 
+	//
+	struct ConstantBuffer
+	{
+		XMMATRIX transformation;
+	};
+
+	const ConstantBuffer cb = {
+		{
+			XMMatrixTranspose(XMMatrixRotationZ(angle) * XMMatrixRotationX(angle) * XMMatrixTranslation(x, y, 3.f)
+							  * XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 10.0f))
+		}
+	};
+
+	D3D11_BUFFER_DESC constBufferDesc{};
+	constBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	constBufferDesc.ByteWidth = sizeof(cb);
+	constBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	constBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	constBufferDesc.MiscFlags = 0;
+	constBufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA constantBufferSbd;
+	constantBufferSbd.pSysMem = &cb;
+
+	ComPtr<ID3D11Buffer> pConstantBuffer;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&constBufferDesc, &constantBufferSbd, &pConstantBuffer));
+	pContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
+	//
+
+	//bind vertex shader
 	ComPtr<ID3DBlob> pBlob;
 	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
 
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	ComPtr<ID3D11InputLayout> pLayout;
-	pDevice->CreateInputLayout(layout, 1, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout);
-	pContext->IASetVertexBuffers(0, 1, pBuff.GetAddressOf(), &stride, &offset);
-	pContext->IASetInputLayout(pLayout.Get());
-	pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	ComPtr<ID3D11VertexShader> pVertexShader;
-	pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
+	pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	ComPtr<ID3D11InputLayout> pLayout;
+	GFX_THROW_INFO(pDevice->CreateInputLayout(layout, 2, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout));
+	pContext->IASetInputLayout(pLayout.Get());
+
+	ComPtr<ID3D11VertexShader> pVertexShader;
+	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
+	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
+	//end
+
+	//bind pixel shader
 	D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
 	ComPtr<ID3D11PixelShader> pPixelShader;
-	pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
+	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0);
+	//
 
 	pContext->OMSetRenderTargets(1, pTarget.GetAddressOf(), nullptr);
 	D3D11_VIEWPORT viewPort;
@@ -215,9 +322,9 @@ void Graphics::DrawTestTriangle()
 	viewPort.TopLeftY = 0.0;
 	viewPort.Width = 800;
 	viewPort.Height = 600;
-	viewPort.MaxDepth = 0;
+	viewPort.MaxDepth = 1;
 	viewPort.MinDepth = 0;
 	pContext->RSSetViewports(1, &viewPort);
 	
-	GFX_THROW_INFO_ONLY(pContext->Draw(3u, 0u));
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(static_cast<UINT>(std::size(indices)), 0u, 0));
 }
