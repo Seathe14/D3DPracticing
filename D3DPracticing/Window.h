@@ -28,11 +28,11 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator= (const Window&) = delete;
-	void SetTitle(std::string_view title);
+	void SetTitle(std::string_view title) const;
 
 	const Keyboard& GetKeyboard() const;
 	const Mouse& GetMouse() const;
-	Graphics& GetGfx();
+	Graphics& GetGfx() const;
 
 	static std::optional<int> ProcessMessages();
 private:
@@ -60,5 +60,5 @@ private:
 
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT HandleMsg(HWND _hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 };

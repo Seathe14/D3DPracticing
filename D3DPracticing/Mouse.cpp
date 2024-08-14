@@ -48,7 +48,7 @@ void Mouse::OnMouseMove([[maybe_unused]] WPARAM wParam, LPARAM lParam)
 	OnEventImpl(Event::Type::Move, lParam);
 }
 
-void Mouse::OnMouseWheel([[maybe_unused]] WPARAM wParam, LPARAM lParam)
+void Mouse::OnMouseWheel([[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
 	const auto delta = GET_WHEEL_DELTA_WPARAM(wParam);
 	wheelDeltaCarry += delta;

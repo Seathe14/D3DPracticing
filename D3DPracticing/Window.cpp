@@ -45,7 +45,7 @@ LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 }
 
-LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT Window::HandleMsg(HWND _hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -82,7 +82,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			mouse.OnMouseMove(wParam, lParam);
 			if (!mouse.IsInWindow())
 			{
-				SetCapture(hWnd);
+				SetCapture(_hWnd);
 				mouse.OnMouseEnter();
 			}
 		}
@@ -108,9 +108,11 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
+	default:
+		break;
 	}
 
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return DefWindowProc(_hWnd, msg, wParam, lParam);
 }
 
 const char* Window::WindowPrivate::GetName()
@@ -181,7 +183,7 @@ Window::Window(int width, int height, std::string_view name)
 			  : width(width)
 			  , height(height)
 {
-	RECT wr;
+	RECT wr{};
 	wr.left = 100;
 	wr.right = width + wr.left;
 	wr.top = 100;
@@ -211,7 +213,7 @@ Window::~Window()
 	DestroyWindow(hWnd);
 }
 
-void Window::SetTitle(std::string_view title)
+void Window::SetTitle(std::string_view title) const
 {
 	if (!SetWindowText(hWnd, title.data()))
 	{
@@ -228,7 +230,7 @@ const Mouse& Window::GetMouse() const
 {
 	return mouse;
 }
-Graphics& Window::GetGfx()
+Graphics& Window::GetGfx() const
 {
 	return *pGfx;
 }

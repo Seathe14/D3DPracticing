@@ -180,7 +180,7 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 			unsigned char a;
 		} color;
 	};
-	const Vertex vertices[] = {
+	constexpr Vertex vertices[] = {
 		{1.0, 1.0, 1.0, 255, 0, 0, 255}, //0
 		{1.0, 1.0, -1.0, 0, 255,0,255}, //1
 		{1.0,-1.0,1.0,0,255,0,255}, //2
@@ -191,18 +191,18 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 		{-1.0,-1.0,1.0,0,255,0,255} //7
 	};
 
-	const Vertex vertices2[] = {
-	{0.25, 0.25, 0.25, 255, 0, 0, 255}, //0
-	{0.25, 0.25, -0.25, 255,0,0,255}, //1
-	{0.25,-0.25,0.25,255,0,0,255}, //2
-	{0.25,-0.25,-0.25,255,0,0,255}, //3
-	{-0.25,0.25,0.25,0,255,0,255}, //4
-	{-0.25,0.25,-0.25, 0,255,0,255}, //5
-	{-0.25,-0.25,-0.25,0,0,255,255}, //6
-	{-0.25,-0.25,0.25,0,0,255,255} //7
+	constexpr Vertex vertices2[] = {
+		{0.25, 0.25, 0.25, 255, 0, 0, 255}, //0
+		{0.25, 0.25, -0.25, 255,0,0,255}, //1
+		{0.25,-0.25,0.25,255,0,0,255}, //2
+		{0.25,-0.25,-0.25,255,0,0,255}, //3
+		{-0.25,0.25,0.25,0,255,0,255}, //4
+		{-0.25,0.25,-0.25, 0,255,0,255}, //5
+		{-0.25,-0.25,-0.25,0,0,255,255}, //6
+		{-0.25,-0.25,0.25,0,0,255,255} //7
 	};
 
-	const uint16_t indices[] = {
+	constexpr uint16_t indices[] = {
 		3, 1, 0, //right
 		0, 2, 3, //right
 		5, 4, 0, //up
@@ -217,7 +217,7 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 		4, 7, 2, //back
 
 	};
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
+	constexpr D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
@@ -254,14 +254,14 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	bufferDesc.StructureByteStride = sizeof(Vertex);
 
 	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = vertices2;
+	initData.pSysMem = vertices;
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 
 	ComPtr<ID3D11Buffer> pBuff;
 	GFX_THROW_INFO(pDevice->CreateBuffer(&bufferDesc, &initData, &pBuff));
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
+	constexpr UINT stride = sizeof(Vertex);
+	constexpr UINT offset = 0;
 	pContext->IASetVertexBuffers(0, 1, pBuff.GetAddressOf(), &stride, &offset);
 	//end
 
@@ -298,7 +298,7 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	ComPtr<ID3DBlob> pBlob;
 	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
 
-	pContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	ComPtr<ID3D11InputLayout> pLayout;
 	GFX_THROW_INFO(pDevice->CreateInputLayout(layout, 2, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pLayout));
