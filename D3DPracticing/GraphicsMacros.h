@@ -10,6 +10,7 @@
 #define GFX_THROW_INFO_ONLY(call) infoManager.Set(); (call); auto messages = infoManager.GetMessages(); if (!messages.empty()) throw Graphics::InfoException(__LINE__, __FILE__, messages)
 #else
 #define GFX_EXCEPT(hr) GFX_EXCEPT_NO_INFO(hr)
-#define GFX_THROW_INFO(hrcall) GFX_THROW_NO_INFO(hrCall)
+#define GFX_THROW_INFO(hrCall) GFX_THROW_NO_INFO(hrCall)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException( __LINE__,__FILE__,(hr) )
+#define GFX_THROW_INFO_ONLY(call) (call);
 #endif

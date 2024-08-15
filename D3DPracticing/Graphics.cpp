@@ -339,7 +339,7 @@ void Graphics::DrawTestTriangle(float angle, float x, float y)
 	};
 	PixelConstantBuffer pCb[6] = 
 	{
-		{1.0f, 0.0f, 1.0f},
+		{1.0f,0.0f,1.0f},
 		{1.0f,0.0f,0.0f},
 		{0.0f,1.0f,0.0f},
 		{0.0f,0.0f,1.0f},

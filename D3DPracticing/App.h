@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Timer.h"
 #include "Window.h"
 
@@ -13,9 +14,9 @@ public:
 	~App() = default;
 
 	int RunLoop();
-private:
-	void DoFrame();
 
+protected:
+	void DoFrame();
 	Window wnd;
 	Timer tmr;
 };
