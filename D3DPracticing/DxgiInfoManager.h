@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <wrl/client.h>
-#include "WinHeader.h"
 #include <dxgidebug.h>
 
 class DxgiInfoManager

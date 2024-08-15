@@ -78,7 +78,7 @@ public:
 	void OnMouseEnter();
 	void OnMouseLeave();
 
-	void Flush();
+	void Flush() const;
 	std::optional<Event> Read() const;
 
 	Pos GetPos() const
@@ -114,7 +114,7 @@ private:
 
 	void OnEventImpl(Event::Type type, std::optional<LPARAM> lParam = std::nullopt);
 
-	void TrimBuffer()
+	void TrimBuffer() const
 	{
 		while (mouseBuffer.size() > bufferSize)
 		{

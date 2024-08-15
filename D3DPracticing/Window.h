@@ -53,7 +53,7 @@ private:
 	};
 	int width{ 0 };
 	int height{ 0 };
-	HWND hWnd{ NULL };
+	HWND hWnd{ nullptr };
 	Keyboard kbd;
 	Mouse mouse;
 	std::unique_ptr<Graphics> pGfx;

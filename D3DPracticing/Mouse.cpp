@@ -77,7 +77,7 @@ void Mouse::OnMouseLeave()
 	OnEventImpl(Event::Type::Leave);
 }
 
-void Mouse::Flush()
+void Mouse::Flush() const
 {
 	std::queue<Event>().swap(mouseBuffer);
 }
