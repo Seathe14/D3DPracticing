@@ -11,7 +11,7 @@ public:
 	App& operator=(const App&) = delete;
 	App(App&&) = delete;
 	App& operator=(App&&) = delete;
-	~App() = default;
+	~App();
 
 	int RunLoop();
 
@@ -19,4 +19,5 @@ protected:
 	void DoFrame();
 	Window wnd;
 	Timer tmr;
+	std::vector<std::unique_ptr<class Box>> boxes;
 };

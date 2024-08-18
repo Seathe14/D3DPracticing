@@ -2,11 +2,16 @@
 
 #include "Window.h"
 #include <d3d11.h>
+#include <DirectXMath.h>
+
 #include "DxgiInfoManager.h"
 #include <wrl/client.h>
+#include "Bindable.h"
 
 class Graphics
 {
+	friend class Bindable;
+
 public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;
@@ -50,12 +55,18 @@ public:
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) const;
 	void DrawTestTriangle(float angle, float x, float y);
+	void DrawIndexed(UINT count);
+
+	void SetProjection(DirectX::FXMMATRIX proj);
+
+	DirectX::XMMATRIX GetProjection() const;
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
+	DirectX::XMMATRIX projection{};
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
