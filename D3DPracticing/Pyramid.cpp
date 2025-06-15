@@ -46,13 +46,13 @@ Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng, std::uniform_real_distributio
 	AddBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
        const std::vector<uint16_t> indices = {
                // base
-               0,1,2,
-               0,2,3,
+               0,2,1,
+               0,3,2,
                // sides (clockwise winding when viewed from outside)
-               0,4,1,
-               1,4,2,
-               2,4,3,
-               3,4,0,
+               0,1,4,
+               1,2,4,
+               2,3,4,
+               3,0,4,
 
        };
 	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
