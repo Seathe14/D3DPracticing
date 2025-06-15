@@ -44,15 +44,17 @@ Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng, std::uniform_real_distributio
 	auto bytecode = vertexShader->GetBytecode();
 	AddBind(std::move(vertexShader));
 	AddBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
-        const std::vector<uint16_t> indices = {
-                0,1,2,
-                0,2,3,
-                0,1,4,
-                1,2,4,
-                2,3,4,
-                3,0,4,
+       const std::vector<uint16_t> indices = {
+               // base
+               0,1,2,
+               0,2,3,
+               // sides (clockwise winding when viewed from outside)
+               0,4,1,
+               1,4,2,
+               2,4,3,
+               3,4,0,
 
-        };
+       };
 	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
 	struct ConstantBuffer2
