@@ -149,7 +149,6 @@
     <ClCompile Include="BaseException.cpp" />
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Box.cpp" />
-    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -158,6 +157,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Topology.cpp" />
     <ClCompile Include="TransformConstantBuffer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -170,7 +170,6 @@
     <ClInclude Include="BaseException.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="Box.h" />
-    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DxgiInfoManager.h" />
@@ -181,6 +180,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformConstantBuffer.h" />
