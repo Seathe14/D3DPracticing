@@ -13,6 +13,8 @@ concept BindableNotIndex = std::is_base_of_v<Bindable, T> && !std::is_same_v<T, 
 
 class Drawable
 {
+	template<typename T>
+	friend class DrawableBase;
 public:
 	Drawable() = default;
 	Drawable(const Drawable&) = delete;
@@ -24,15 +26,18 @@ public:
 
 	void Draw(Graphics& gfx) noexcept(!IS_DEBUG);
 
+protected:
 	template<BindableNotIndex T>
 	void AddBind(std::unique_ptr<T> bind) noexcept(!IS_DEBUG)
 	{
-		
+
 		bindables.emplace_back(std::move(bind));
 	}
 
-	void AddIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept;
+	void AddIndexBuffer(std::unique_ptr<IndexBuffer> indexBuf) noexcept;
 private:
 	const IndexBuffer* pIndexBuffer = nullptr;
 	std::vector<std::unique_ptr<Bindable>> bindables;
+
+	virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
 };

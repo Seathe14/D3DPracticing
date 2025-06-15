@@ -1,5 +1,6 @@
 #pragma once
 #include <exception>
+#include <string>
 #include <string_view>
 
 class BaseException : public std::exception

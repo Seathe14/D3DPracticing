@@ -13,7 +13,7 @@ protected:
 	Bindable(const Bindable&) = delete;
 	Bindable& operator=(const Bindable&) = delete;
 
-	static ID3D11DeviceContext* GetContext(Graphics& gfx);
-	static ID3D11Device* GetDevice(Graphics& gfx);
-	static DxgiInfoManager& GetInfoManager(Graphics& gfx);
+	static ID3D11DeviceContext* GetContext(Graphics& gfx) noexcept;
+	static ID3D11Device* GetDevice(Graphics& gfx) noexcept;
+	static DxgiInfoManager& GetInfoManager(Graphics& gfx) noexcept(IS_DEBUG);
 };

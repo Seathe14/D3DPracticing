@@ -11,7 +11,7 @@ public:
 	{
 		INFOMAN(gfx);
 		//initialize vertex buffer
-		D3D11_BUFFER_DESC bufferDesc{};
+		D3D11_BUFFER_DESC bufferDesc;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.ByteWidth = stride * static_cast<UINT>(vertices.size());
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -19,7 +19,7 @@ public:
 		bufferDesc.MiscFlags = 0;
 		bufferDesc.StructureByteStride = stride;
 
-		D3D11_SUBRESOURCE_DATA initData{};
+		D3D11_SUBRESOURCE_DATA initData;
 		initData.pSysMem = vertices.data();
 		initData.SysMemPitch = 0;
 		initData.SysMemSlicePitch = 0;
