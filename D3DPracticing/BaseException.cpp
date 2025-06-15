@@ -7,10 +7,11 @@ BaseException::BaseException(int line, std::string_view file) : line(line), file
 
 char const* BaseException::what() const
 {
-	std::ostringstream oss;
-	oss << GetType() << std::endl
-		<< GetOriginString();
-	return whatBuffer.c_str();
+        std::ostringstream oss;
+        oss << GetType() << std::endl
+                << GetOriginString();
+        whatBuffer = oss.str();
+        return whatBuffer.c_str();
 }
 
 const char* BaseException::GetType() const
