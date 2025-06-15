@@ -2,6 +2,7 @@
 
 #include "Timer.h"
 #include "Window.h"
+#include "Drawable.h"
 
 class App
 {
@@ -19,5 +20,5 @@ protected:
 	void DoFrame();
 	Window wnd;
 	Timer tmr;
-	std::vector<std::unique_ptr<class Box>> boxes;
+        std::vector<std::unique_ptr<Drawable>> drawables;
 };

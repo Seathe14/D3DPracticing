@@ -78,6 +78,9 @@
     <ClCompile Include="PixelShader.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
+    <ClCompile Include="Pyramid.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
     <ClCompile Include="VertexShader.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
@@ -146,6 +149,9 @@
     <ClInclude Include="PixelShader.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+      <ClInclude Include="Pyramid.h">
+        <Filter>Header Files\Drawable</Filter>
+      </ClInclude>
     <ClInclude Include="VertexShader.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
