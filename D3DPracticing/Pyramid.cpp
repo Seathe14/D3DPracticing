@@ -50,10 +50,10 @@ Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng, std::uniform_real_distributio
         AddStaticBind(std::make_unique<PixelShader>(gfx, L"PyramidPixelShader.cso"));
 
         const std::vector<uint16_t> indices = {
-            0,1,4,
-            1,2,4,
-            2,3,4,
-            3,0,4,
+            0,4,1,
+            1,4,2,
+            2,4,3,
+            3,4,0,
             0,1,2,
             0,2,3,
         };
