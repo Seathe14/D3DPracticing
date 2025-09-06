@@ -84,6 +84,9 @@
     <ClCompile Include="Box.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Pyramid.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
     <ClCompile Include="TransformConstantBuffer.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
@@ -155,6 +158,9 @@
     <ClInclude Include="Box.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="Pyramid.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
     <ClInclude Include="TransformConstantBuffer.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
@@ -167,6 +173,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PyramidPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
