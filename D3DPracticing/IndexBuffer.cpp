@@ -9,7 +9,6 @@ IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<uint16_t>& indices)
 {
 	INFOMAN(gfx);
 
-	D3D11_BUFFER_DESC ibd{};
 	//Intiialize index buffer
 	D3D11_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
