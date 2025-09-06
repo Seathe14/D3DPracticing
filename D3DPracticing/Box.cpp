@@ -44,10 +44,10 @@ Box::Box(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<float>
 		};
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-		auto vertexShader = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
+		auto vertexShader = std::make_unique<VertexShader>(gfx, L"ShaderOutput/VertexShader.cso");
 		auto bytecode = vertexShader->GetBytecode();
 		AddStaticBind(std::move(vertexShader));
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"ShaderOutput/PixelShader.cso"));
 		const std::vector<uint16_t> indices = {
 			3, 1, 0, //right
 			0, 2, 3, //right
