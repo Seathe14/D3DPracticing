@@ -21,7 +21,52 @@ set(D3DPracticing_SOURCES
     WinMain.cpp
 )
 
-add_executable(D3DPracticing WIN32 ${D3DPracticing_SOURCES})
+set(D3DPracticing_HEADERS
+    App.h
+    BaseException.h
+    Bindable.h
+    Box.h
+    Drawable.h
+    DrawableBase.h
+    DxgiInfoManager.h
+    Graphics.h
+    IndexBuffer.h
+    InputLayout.h
+    Keyboard.h
+    Mouse.h
+    PixelShader.h
+    Topology.h
+    TransformConstantBuffer.h
+    VertexBuffer.h
+    VertexShader.h
+    Window.h
+)
+
+set(HLSL
+    VertexShader.hlsl
+    PixelShader.hlsl)
+
+
+add_executable(D3DPracticing WIN32 ${D3DPracticing_SOURCES} ${D3DPracticing_HEADERS})
+
+target_sources(D3DPracticing PRIVATE ${HLSL})
+
+set_source_files_properties(VertexShader.hlsl PROPERTIES
+                            VS_SHADER_TYPE "Vertex"
+                            VS_SHADER_MODEL "5.0"
+                            VS_SHADER_ENTRYPOINT "main"
+                            VS_SHADER_OBJECT_FILE_NAME "$(ProjectDir)/ShaderOutput/%(Filename).cso")
+
+set_source_files_properties(PixelShader.hlsl PROPERTIES
+                            VS_SHADER_TYPE "Pixel"
+                            VS_SHADER_MODEL "5.0"
+                            VS_SHADER_ENTRYPOINT "main"
+                            VS_SHADER_OBJECT_FILE_NAME "$(ProjectDir)/ShaderOutput/%(Filename).cso")
+
+
+target_compile_definitions(D3DPracticing PRIVATE
+    IS_DEBUG=$<$<CONFIG:Debug>:1>$<$<NOT:$<CONFIG:Debug>>:0>
+)
 
 target_include_directories(D3DPracticing PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
