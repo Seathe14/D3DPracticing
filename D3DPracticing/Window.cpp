@@ -201,9 +201,15 @@ Window::Window(int width, int height, std::string_view name)
 		}
 		ShowWindow(hWnd, SW_SHOWDEFAULT);
 		pGfx = std::make_unique<Graphics>(hWnd);
+	}
+	catch (...)
+	{
+		// Workaround to avoid crashing during wndProc events
+		if (hWnd != nullptr)
+		{
+			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&DefWindowProc));
+			DestroyWindow(hWnd);
 		}
-	catch (...) { // Workaround to avoid crashing during wndProc events
-		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&DefWindowProc));
 		throw;
 	}
 }
