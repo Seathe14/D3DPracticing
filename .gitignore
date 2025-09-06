@@ -400,3 +400,10 @@ FodyWeavers.xsd
 *.cso
 
 !libs/*/*/Release
+# CMake build artifacts
+/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
